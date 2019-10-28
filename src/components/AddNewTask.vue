@@ -17,6 +17,7 @@
 
               <v-col cols="12">
                 <v-text-field label="Email" v-model="newTask.email" required></v-text-field>
+                <span v-show="!validate.email" class="red--text text--darken-3">Введите корректную почту</span>
               </v-col>
               <v-col cols="12">
                 <v-text-field label="Задача" v-model="newTask.description" required></v-text-field>
@@ -28,7 +29,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialog = false">Закрыть</v-btn>
-          <v-btn color="blue darken-1" text @click="saveTask">Сохранить</v-btn>
+          <v-btn color="blue darken-1" text @click="validateForm">Сохранить</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -45,6 +46,12 @@ export default {
       name: "",
       email: "",
       description: ""
+    },
+    validate:{
+      email: true,
+      name: true,
+      description: true,
+
     }
   }),
   methods: {
@@ -59,7 +66,7 @@ export default {
         description: this.newTask.description,
         created: new Date()
       }),
-        url: "http://other/TODOApi/api/product/create.php",
+        url: "https://astred.ru/api/product/create.php",
         crossDomain: true
       })
         .then(response => {
@@ -74,18 +81,16 @@ export default {
 
           this.dialog = false;
           this.$emit('reload-task-list');
-          /* eslint-disable no-console */
-          console.log(response);
-          console.log("yes");
 
-          /* eslint-enable no-console */
-        })
-        .catch(function(error) {
-          /* eslint-disable no-console */
-          console.log("no");
-          console.log(error);
-          /* eslint-enable no-console */
         });
+
+    },
+    validateForm: function(){
+      this.validate.email = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(this.newTask.email);
+      if (this.validate.email){
+        this.saveTask();
+      }
+
     }
   }
 };

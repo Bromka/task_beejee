@@ -22,7 +22,7 @@
     </v-card>
 
     <v-card v-for="record in recordsObject" :key="record.id" class="pa-4 my-3" outlined>
-      <single-task v-bind:record="record" /> 
+      <single-task v-on:reload-task-list="getTaskList()" v-bind:record="record" v-bind:userrole="userrole" /> 
       
     </v-card>
 
@@ -46,6 +46,7 @@ import AddNewTask from "./AddNewTask";
 import SingleTask from "./SingleTask";
 
 export default {
+  props: ['userrole'],
   data() {
     return {
       recordsObject: "",
@@ -63,7 +64,7 @@ export default {
     getTaskList: function() {
       axios({
         method: "post",
-        url: "http://other/TODOApi/api/product/read.php",
+        url: "https://astred.ru/api/product/read.php",
         crossDomain: true,
         data: JSON.stringify({
         sortAsc: this.switchSortAsc,
@@ -79,15 +80,9 @@ export default {
           let numberOfRecords = Number(response.data.count["count"]);
           this.numberOfPages = Math.ceil(numberOfRecords / 3);
 
-          /* eslint-disable no-console */
-          console.log(this.recordsObject);
-          /* eslint-enable no-console */
+
         })
-        .catch(function(error) {
-          /* eslint-disable no-console */
-          console.log(error);
-          /* eslint-enable no-console */
-        });
+
     },
     newSortDest: function(){
       this.switchSortAsc = !this.switchSortAsc;
